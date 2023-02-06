@@ -1,6 +1,6 @@
 RewriteEngine On
-RewriteBase /API
+RewriteBase /api
 Options +FollowSymLinks
 Options -Indexes
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule .* server.php/$0 [L]
+RewriteRule .* serve.php/$0 [L]
