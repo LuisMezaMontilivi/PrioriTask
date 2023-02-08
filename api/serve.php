@@ -13,27 +13,24 @@ class Server {
     */
     public function serve() {
       
-      $uri = $_SERVER['REQUEST_URI'];
+      $uri = substr($_SERVER['REQUEST_URI'],4);
       $method = $_SERVER['REQUEST_METHOD'];
 
       if($method == "PUT"){
-        $paths = explode('/', $this->paths($uri));
-        array_shift($paths); // saltem els valors de la URL
-        array_shift($paths); // saltem el valor de /api
-        $seccio = array_shift($paths); //obtenim l'arrel del que volen
-        $funcio = array_shift($paths); //obtenim l'acció del que volen 
-
-        if($seccio == "token"){
-          if($funcio == "obtenir" && $_SERVER["HTTP_APIKEY"] == Server::APIKEY){//única funcionalitat que va amb la APIKEY
-            $obtenirToken = $this->GeneracioToken();//generem el token
-            $this->GuardarTokenNoIdentificatiu($obtenirToken);
-            header('HTTP/1.1 200 OK');
-            echo $obtenirToken;//enviem a l'usuari
-          }
-          else{
-            header('HTTP/1.1 412 Precondition Failed');
-          }
+        switch($uri){
+          case "/token/obtenir":
+            if($_SERVER["HTTP_APIKEY"] == Server::APIKEY){
+              echo $this->ProporcionarTokenInici();
+            }
+            else{
+              header('HTTP/1.1 401 Unauthorized');
+            }
+            break;
+          default:
+            header('HTTP/1.1 404 Not Found');
+            break;
         }
+        
       }
       else{
         header('HTTP/1.1 405 Method Not Allowed');
@@ -70,16 +67,6 @@ class Server {
       $temps = substr($candidat,144,32);
       $validacio = substr($candidat,176,128);
       return hash("sha512", $id . $email . $temps) == $validacio;
-    }
-
-    /* Function: GuardarTokenNoIdentificatiu
-
-      Guarda el token passat per paràmetre sense relacionar-se amb un usuari
-     */
-    function GuardarTokenNoIdentificatiu($token){
-      BdD::connect();
-      BdD::guardarTokenBD($token);
-      BdD::close();
     }
 
     /* Function: GeneracioToken
@@ -119,6 +106,19 @@ class Server {
       } else {
         return $_SERVER['REMOTE_ADDR']; 
       }
+    }
+
+    /* Function: ProporcionarTokenInici
+    
+      Retorna un Token no identificatiu
+    */
+    function ProporcionarTokenInici(){
+      $obtenirToken = $this->GeneracioToken();
+      BdD::connect();
+      BdD::guardarTokenBD($obtenirToken);
+      BdD::close();
+      header('HTTP/1.1 201 OK');
+      return $obtenirToken;
     }
     
     private function paths($url) {
