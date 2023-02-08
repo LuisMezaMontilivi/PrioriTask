@@ -77,5 +77,109 @@ class BdD {
         return $output;
 
     }
-}
+
+
+
+    /* Function: validaTokenBD
+
+        A partir del token donat, consulta a la BdD si existeix un usuari amb el determinat token
+
+        Parameters:
+            $tokenAValidar - token a comprovar
+
+        Returns: rol del usuari o bé un bool de false en cas de no trobar-lo
+
+
+    */
+    public static function validaTokenBD($tokenAValidar){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                Select rol from Usuari WHERE token = :token ;
+                ;
+                "
+            );
+            $query->bindParam(':token', $tokenAValidar);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)== 1){
+                $output = $outcome[0]["rol"];
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+    }
+        /* Function: consultaUsuarisBD
+
+        Retorna un llistat de tots els usuaris de l'aplicació
+
+        Returns: array d'usuaris de l'aplicació
+
+
+        */
+    public static function consultaUsuarisBD(){
+
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT id_usuari , nom, email , rol, data_alta , data_baixa , data_ultima_peticio  from Usuari u ;
+                ;
+                "
+            );
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $output = $query->fetchAll();
+
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+
+    }
+
+
+    /* Function: consultaTecnicsBD
+
+        Retorna un llistat de tots els tècnics de l'aplicació amb el seu nom, email i id
+
+        Returns: array de tècnics de l'aplicació amb el seu nom, email i id
+
+
+        */
+        public static function consultaTecnicsBD(){
+
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    SELECT id_usuari , nom , email  from Usuari u WHERE rol ='t';
+                    ;
+                    "
+                );
+                $query->execute();
+                $query->setFetchMode(PDO::FETCH_ASSOC);
+                $output = $query->fetchAll();
+    
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+    
+        }
+
+
+    }
+
+   
+
 ?>

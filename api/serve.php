@@ -15,6 +15,12 @@ class Server {
           if($uri == '/API/usuari/contrasenya'){
             echo $this->canviaContrasenya();
           }
+          if($uri == '/API/usuari/llistat'){
+            var_dump( $this->consultaUsuaris());
+          }
+          if($uri == '/API/usuari/llistat_tecnics'){
+            var_dump($this->consultaTecnics());
+          }
         }
         else{
           echo "El mètode no era Put";
@@ -61,7 +67,7 @@ class Server {
         }
 
 
-        /* Function: canviaContrasenya(){
+        /* Function: canviaContrasenya()
           
           A partir dels Headers rebuts, validació de token rebut, canvi de contrassenya a la BdD al usuari que té el token, retorn d'OK o Unauthorised
 
@@ -96,7 +102,72 @@ class Server {
             }
           echo $output;
           return $output;
+        }
 
+
+        /* Function: validaToken
+
+        A partir dels headers rebuts, validació del token contra la BdD, retorn del rol del usuari o bool de false
+
+        Parameters:
+          $tokenAValidar - string amb el token que volem validar contra la BdD
+
+        Returns: rol del usuari si el token és vàlid o bool false en cas contrari
+        */
+        private function validaToken($tokenAValidar){
+          BdD::connect();
+          $output = BdD::validaTokenBD($tokenAValidar);
+          BdD::close();
+          return $output;
+        }
+
+         /* Function: consultaUsuaris()
+          
+           A partir dels Headers rebuts, validació de token rebut, i retorn d'array d'arrays amb dades dels usuaris de l'aplicació, amb excepció dels camps no pertinents
+           
+           Returns: array d'arrays amb les dades dels usuaris(id, nom, email, rol, dates d'alta, baixa i ultima petició) + headers corresponents: 200 OK o 401 Unauthorised
+
+        */
+
+        private function consultaUsuaris(){
+          $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+          $rol = $this->validaToken($token);
+          if($rol == 'a')
+          {
+            BdD::connect();
+            $output = BdD::consultaUsuarisBD();
+            BdD::close();
+          }
+          else
+          {
+            header('HTTP/1.1 401 Unauthorised');
+            $output = "no és usuari correcte";
+          }
+          return $output;
+        }
+        
+         /* Function: consultaUsuaris()
+          
+           A partir dels Headers rebuts, validació de token rebut, i retorn d'array d'array de les dades de id, nom i mail dels tècnics de l'aplicació
+           
+           Returns: array d'arrays amb les dades d'email, nom i mail  dels tècnics + headers corresponents: 200 OK o 401 Unauthorised
+
+        */
+        private function consultaTecnics(){
+          $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+          $rol = $this->validaToken($token);
+          if($rol == 'a' || $rol == 'g')
+          {
+            BdD::connect();
+            $output = BdD::consultaTecnicsBD();
+            BdD::close();
+          }
+          else
+          {
+            header('HTTP/1.1 401 Unauthorised');
+            $output= "no és usuari correcte";
+          }
+          return $output;
 
         }
 
