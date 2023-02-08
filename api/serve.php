@@ -20,10 +20,11 @@ class Server {
         $paths = explode('/', $this->paths($uri));
         array_shift($paths); // saltem els valors de la URL
         array_shift($paths); // saltem el valor de /api
-        $demanat = array_shift($paths); //obtenim l'arrel del que volen
-        $verb = array_shift($paths); //obtenim l'acció del que volen 
-        if($demanat == "token"){
-          if($verb == "obtenir" && $_SERVER["HTTP_APIKEY"]==Server::APIKEY){//única funcionalitat que va amb la APIKEY
+        $seccio = array_shift($paths); //obtenim l'arrel del que volen
+        $funcio = array_shift($paths); //obtenim l'acció del que volen 
+
+        if($seccio == "token"){
+          if($funcio == "obtenir" && $_SERVER["HTTP_APIKEY"] == Server::APIKEY){//única funcionalitat que va amb la APIKEY
             $obtenirToken = $this->GeneracioToken();//generem el token
             $this->GuardarTokenNoIdentificatiu($obtenirToken);
             header('HTTP/1.1 200 OK');
