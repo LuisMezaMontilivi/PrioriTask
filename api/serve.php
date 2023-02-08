@@ -41,10 +41,6 @@ class Server {
       
     }
 
-    function GuardarTokenIdentificatiu(){
-
-    }
-
     /* Function: GenerarTokenIdentificatiu
     
       Genera un token identificatiu a partir de les dades de l'usuari
