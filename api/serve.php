@@ -21,6 +21,12 @@ class Server {
           if($uri == '/API/usuari/llistat_tecnics'){
             var_dump($this->consultaTecnics());
           }
+          if($uri == '/API/usuari/alta'){
+            var_dump($this->creaUsuari());
+          }
+          if($uri == '/API/usuari/modificar'){
+            var_dump($this->modificaUsuari());
+          }
         }
         else{
           echo "El mètode no era Put";
@@ -53,7 +59,6 @@ class Server {
           if($output != false){
             //Funció de generació i insert del nou token a la BDD. El resultat d'aquesta inserció serà el nostre output
             //Funció de inserió de darrera petició a la BdD
-            
             header('HTTP/1.1 200 OK');
             }
           else{
@@ -79,18 +84,17 @@ class Server {
           $contrasenya = $_SERVER['HTTP_CONTRASENYA'];
           echo "Ha entrat a la funció";
           //Validació del token actual
-          if($token)
+          if($this->validaToken() != false)
           {
-          BdD::connect();
-          echo "Ha entrat a token i ha conectat";
+            BdD::connect();
             $output = BdD::canviContrasenyaBD($token, $contrasenya);
             if($output == 1)
             {
-              //Funció de inserió de darrera petició a la BdD
+              //Funció de inserció de darrera petició a la BdD
               header('HTTP/1.1 200 OK');
               }
               else{
-                //  header('HTTP/1.1 304 Not Modified'); //Preguntar a Carles
+                  header('HTTP/1.1 400 Bad Request'); 
                 $output = "Token Incorrecte";
                 }
                // Tanquem la bdd
@@ -168,15 +172,55 @@ class Server {
             $output= "no és usuari correcte";
           }
           return $output;
+        }
 
+        /* Function: creaUsuari
+          
+           A partir dels Headers rebuts, validació de token rebut, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
+           
+           Returns: bool resultat de l'execució
+
+        */  
+        private function creaUsuari(){
+          $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+          $rol = $this->validaToken($token);
+          $infoUsuari = json_decode($_SERVER['HTTP_INFORMACIOUSUARI'],true);
+          if($rol =='a')
+          {
+            BdD::connect();
+            $output = BdD::creaUsuariBD($infoUsuari);
+            BdD::close();
+          }
+          else
+          {
+            header('HTTP/1.1 401 Unauthorised');
+            $output= "no és usuari correcte";
+          }
+           return $output;
+        }
+
+
+        private function modificaUsuari(){
+          $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+          $rol = $this->validaToken($token);
+          $infoUsuari = json_decode($_SERVER['HTTP_INFORMACIOUSUARI'],true);
+          if($rol =='a')
+          {
+            BdD::connect();
+            $output = BdD::modificaUsuariBD($infoUsuari);
+            BdD::close();
+          }
+          else
+          {
+            header('HTTP/1.1 401 Unauthorised');
+            $output= "no és usuari correcte";
+          }
+           return $output;
         }
 
 
 
-
-
-    
-
+  
     }
 
   

@@ -48,8 +48,6 @@ class BdD {
             echo "Error: " . $e->getMessage();
             $output = $e->getMessage();
         }
-        
-
         return $output;
     }
 
@@ -152,8 +150,7 @@ class BdD {
 
         Returns: array de tècnics de l'aplicació amb el seu nom, email i id
 
-
-        */
+    */
         public static function consultaTecnicsBD(){
 
             $output = false;
@@ -175,6 +172,91 @@ class BdD {
             }
             return $output;
     
+        }
+
+
+
+         /* Function: creaUsuariBD
+          
+           A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
+           
+           Returns: bool resultat de l'execució
+
+        */  
+
+        public static function creaUsuariBD($infoUsuari){
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    Update Usuari
+                    values(:nom, :contrasenya, :email, :rol)
+                    where id_usuari = :id_usuari;
+                    "
+                );
+                $query->bindParam(':nom', $infoUsuari["nom"]);
+                $query->bindParam(':contrasenya', $infoUsuari["contrasenya"]);
+                $query->bindParam(':email', $infoUsuari["email"]);
+                $query->bindParam(':rol', $infoUsuari["rol"]);
+                $output=$query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+
+        }
+
+         /* Function: modificaUsuariBD
+          
+           A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
+           
+           Returns: bool resultat de l'execució
+
+        */  
+
+        public static function modificaUsuariBD($infoUsuari){
+            $output = false;
+            try{
+                if($infoUsuari["actiu"]){
+                    $query = (self::$connection)->prepare(
+                        "
+                        Update Usuari
+                        set nom = :nom ,
+                        email = :email,
+                        rol = :rol ,
+                        data_baixa = NULL
+                        WHERE id_usuari = :id_usuari;
+                        "
+                    );
+                }
+                else if($infoUsuari["actiu"] == false){
+                    $query = (self::$connection)->prepare(
+                        "
+                        Update Usuari
+                        set nom = :nom ,
+                        email = :email,
+                        rol = :rol,
+                        data_baixa = CURRENT_TIMESTAMP
+                        WHERE id_usuari = :id_usuari;
+                        "
+                    );
+                }
+                $query->bindParam('id_usuari', $infoUsuari["id_usuari"]);
+                $query->bindParam(':nom', $infoUsuari["nom"]);
+                $query->bindParam(':email', $infoUsuari["email"]);
+                $query->bindParam(':rol', $infoUsuari["rol"]);
+                $output=$query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+
+
+
         }
 
 
