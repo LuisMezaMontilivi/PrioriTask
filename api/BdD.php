@@ -4,18 +4,8 @@ class BdD {
     private static $connection;
 
 	//La base de dades està posada de manera fixa al codi
-        //Per treballar en local cal canviar user i contra. Per a realease:
-            //  self::$connection = new PDO("mysql:host=127.0.0.1;dbname=PrioriTaskBD", "adminer", "Bhun@89ble.oient");
     public static function connect() {
-
-        try{
-            self::$connection = new PDO("mysql:host=localhost;dbname=PrioriTaskBD", "usuari", "1234");
-        }
-        catch(PDOException $e){
-           self::$connection = null;
-            return $e->getMessage();
-        }
-
+        self::$connection = new PDO("mysql:host=localhost;dbname=PrioriTaskBD", "adminer", "1234");
     }
 
 	//Tancar conexió a la BdD
@@ -24,7 +14,7 @@ class BdD {
     }
 	
 	//Funcionalitats a la BdD
-
+    
     /* Function: guardarTokenBD
     
     */
@@ -77,13 +67,184 @@ class BdD {
         return $output;
 	}
 
-      /* Function: loginBD
+    /*  Function: guardarTascaBD
 
-        Comprova si existeix un usuari amb el mail i password concrets, retorna el seu id i mail
+        Crea una tasca a la BdD
 
         Parameters:
-            $email, $contrasenya
+            $tasca  -   Array associatiu on tindrà tot el contingut d'una tasca
 
+    */
+    public static function guardarTascaBD($tasca){
+		$guardat = true;
+		try{
+			$consulta = (BdD::$connection)->prepare("
+                INSERT INTO Tasca (titol,descripcio,prioritat,estat,id_gestor,id_tecnic)
+                VALUES (:titol, :descripcio, :prioritat, :estat, :gestor, :tecnic);				
+			");
+			$consulta->bindParam('titol',$tasca["titol"]);
+            $consulta->bindParam('descripcio',$tasca["descripcio"]);
+            $consulta->bindParam('prioritat',$tasca["prioritat"]);
+            $consulta->bindParam('estat',$tasca["estat"]);
+            $consulta->bindParam('gestor',$tasca["gestor"]);
+            $consulta->bindParam('tecnic',$tasca["tecnic"]);
+			$consulta->execute();
+		}
+		catch(PDOException $e){
+			$guardat = false;
+		}
+		return $guardat;
+	}
+
+    /* Function: relacionatsTascaBD
+
+        Recupera d'una tasca el gestor i tècnic relacionats
+
+        Parameters:
+            $idTasca -  Tasca a cercar els tokens relacionats
+
+        Returns:
+            Array associatiu amb token_gestor i token_tecnic
+    */
+    public static function relacionatsTascaBD($idTasca){
+		$output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT tas.data_inici, tas.estat, g.token AS token_gestor, t.token AS token_tecnic 
+                FROM Tasca tas 
+                    JOIN Usuari g 
+                        ON (tas.id_gestor = g.id_usuari) 
+                    JOIN Usuari t 
+                        ON (tas.id_tecnic = t.id_usuari)
+                WHERE id_tasca = :id ;
+                "
+            );
+            $query->bindParam(':id', $idTasca);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)>0){
+                $output["estat"] = $outcome[0]["estat"];
+                $output["data_inici"] = $outcome[0]["data_inici"];
+                $output["token_gestor"] = $outcome[0]["token_gestor"];
+                $output["token_tecnic"] = $outcome[0]["token_tecnic"];
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+	}
+
+    /* Function: modificarTascaTecnicBD
+
+        Modifica de la tasca el comentari i l'estat
+
+        Parameters:
+            $tasca - Array associatiu amb id, comentari
+     */
+    public static function modificarTascaTecnicBD($tasca,$estat){
+        $modificar = true;
+		try{
+            $sql = "UPDATE Tasca
+                    SET comentari = :comentari,
+                        estat = :estat ";
+            if(isset($tasca["estat"]) && $tasca["estat"]!=$estat["estat"]){//si tenim un nou estat que és diferent de l'anterior
+                if($tasca["estat"] == "p" && $estat["estat"]=="s") //si modifiquem a "en progress" des de "per iniciar" caldrà posar data inici
+                    $sql = $sql . ", data_inici = CURRENT_TIMESTAMP ";
+                elseif($tasca["estat"] == "d")//i si modifiquem a done caldrà posar data acabament
+                    $sql = $sql . ", data_acabament = CURRENT_TIMESTAMP ";
+            }
+            $sql = $sql . " WHERE id_tasca = :id ;";
+			$consulta = (BdD::$connection)->prepare($sql);
+			$consulta->bindParam('estat',$tasca["estat"]);
+			$consulta->bindParam('comentari',$tasca["comentari"]);
+            $consulta->bindParam('id',$tasca["id"]);
+			$consulta->execute();
+		}
+		catch(PDOException $e){
+			$modificar = false;
+		}
+		return $modificar;
+    }
+
+    /* Function: modificarTascaGestorBD
+
+        Modifica de la tasca el titol, descripcio, prioritat, estat, comentari i id_tecnic de la tasca
+
+        Parameters:
+            $tasca - Array associatiu amb els nous paràmetres de la tasca
+            $estat - Array associatiu amb antics estat de la tasca
+     */
+    public static function modificarTascaGestorBD($tasca,$estat){
+        $modificar = true;
+		try{
+            $sql = "UPDATE Tasca
+                    SET titol=:titol,
+                        descripcio=:descripcio,
+                        prioritat=:prioritat,
+                        id_tecnic=:tecnic,
+                        estat=:estat ";
+            if(isset($tasca["estat"]) && $tasca["estat"]!=$estat["estat"]){//si tenim un nou estat que és diferent de l'anterior
+                if($tasca["estat"] == "p" && $estat["estat"]=="s") //si modifiquem a "en progress" des de "per iniciar" caldrà posar data inici
+                    $sql = $sql . ", data_inici = CURRENT_TIMESTAMP ";
+                elseif($tasca["estat"] == "d")//i si modifiquem a done caldrà posar data acabament
+                    $sql = $sql . ", data_acabament = CURRENT_TIMESTAMP ";
+            }
+            $sql = $sql . " WHERE id_tasca = :id ;";
+			$consulta = (BdD::$connection)->prepare($sql);
+            $consulta->bindParam('titol',$tasca["titol"]);
+			$consulta->bindParam('descripcio',$tasca["descripcio"]);
+            $consulta->bindParam('prioritat',$tasca["prioritat"]);
+            $consulta->bindParam('estat',$tasca["estat"]);
+            $consulta->bindParam('tecnic',$tasca["tecnic"]);
+            $consulta->bindParam('id',$tasca["id"]);
+			$consulta->execute();
+		}
+		catch(PDOException $e){
+			$modificar = false;
+            echo $e->getMessage();
+		}
+		return $modificar;
+    }
+
+    public static function recuperarLlistatTasquesBD($token){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT tas.id_tasca, tas.titol, tas.descripcio, tas.data_alta, tas.data_inici, tas.data_acabament , tas.prioritat , tas.estat , tas.comentari,
+                id_gestor, id_tecnic, t.nom AS nom_tecnic
+                FROM Tasca tas
+                JOIN Usuari g
+                    ON (g.id_usuari = id_gestor)
+                JOIN Usuari t 
+                    ON (t.id_usuari = id_tecnic)
+                WHERE g.token = :tokenG OR t.token = :tokenT ;
+                "
+            );
+            $query->bindParam(':tokenG', $token);
+            $query->bindParam(':tokenT', $token);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)>0){
+                $output = $outcome;
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+    }
+    
+    /* Function: loginBD
+        Comprova si existeix un usuari amb el mail i password concrets, retorna el seu id i mail
+        Parameters:
+            $email, $contrasenya
         Returns:
             False en cas de no existir, array de 2 posicions 0=id 1=email
     */
@@ -116,12 +277,9 @@ class BdD {
     }
 
       /* Function: guardarTokenIdentificatiuBD
-
         Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
-
         Parameters:
             $tokenIdentificatiu, $id on insertar-lo
-
         Returns:
             False o Nombre de rows afectades
     */
@@ -152,12 +310,9 @@ class BdD {
 
 
        /* Function: canviContrasenyaBD
-
         Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
-
         Parameters:
             $token, $contrasenya
-
         Returns:
             False o Nombre de rows afectades
     */
@@ -188,15 +343,10 @@ class BdD {
 
 
     /* Function: validaTokenBD
-
         A partir del token donat, consulta a la BdD si existeix un usuari amb el determinat token
-
         Parameters:
             $tokenAValidar - token a comprovar
-
         Returns: rol del usuari o bé un bool de false en cas de no trobar-lo
-
-
     */
     public static function validaTokenBD($tokenAValidar){
         $output = false;
@@ -222,12 +372,8 @@ class BdD {
         return $output;
     }
         /* Function: consultaUsuarisBD
-
         Retorna un llistat de tots els usuaris de l'aplicació
-
         Returns: array d'usuaris de l'aplicació
-
-
         */
     public static function consultaUsuarisBD(){
 
@@ -254,11 +400,8 @@ class BdD {
 
 
     /* Function: consultaTecnicsBD
-
         Retorna un llistat de tots els tècnics de l'aplicació amb el seu nom, email i id
-
         Returns: array de tècnics de l'aplicació amb el seu nom, email i id
-
     */
         public static function consultaTecnicsBD(){
 
@@ -290,7 +433,6 @@ class BdD {
            A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
            
            Returns: bool resultat de l'execució
-
         */  
 
         public static function creaUsuariBD($infoUsuari){
@@ -322,7 +464,6 @@ class BdD {
            A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
            
            Returns: bool resultat de l'execució
-
         */  
 
         public static function modificaUsuariBD($infoUsuari){
@@ -371,7 +512,6 @@ class BdD {
             A partir del token de l'usuari, actualitzar la data de la darrera petició al moment de realització
            
            Returns: bool resultat de l'execució
-
         */  
         public static function updateDataUltimaPeticioBD($token){
             $output = false;
@@ -393,10 +533,6 @@ class BdD {
             return $output;
 
         }
-
-
-    }
-
-
+}
 
 ?>
