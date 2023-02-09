@@ -26,6 +26,14 @@ class Server {
               header('HTTP/1.1 401 Unauthorized');
             }
             break;
+          case "/tasca/crear":
+            $this->CrearNovaTasca();
+            break;
+            
+          case "/tasca/modificar":
+            $this->ModificarTasca();
+            break;
+            
           default:
             header('HTTP/1.1 404 Not Found');
             break;
@@ -36,6 +44,49 @@ class Server {
         header('HTTP/1.1 405 Method Not Allowed');
       }
       
+    }
+
+    /* Function: ModificarTasca
+    
+      Modifica una tasca ja existent si l'usuari actual té permisos de modificació (admin o gestor que l'ha creat)
+    */
+    function ModificarTasca(){
+      $rolToken = "t";//primer hem d'obtenir el rol del token 
+      if(isset($rolToken) && $rolToken != "a"){//si el token existeix i no es admin
+        $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
+        BdD::connect();
+        $estat = BdD::relacionatsTascaBD($tasca);
+        BdD::close();
+        if($estat["token_gestor"]==$_SERVER["HTTP_TOKEN"]){//podem editar tots els camps
+          BdD::connect();
+          BdD::modificarTascaGestorBD($tasca,$estat);
+          BdD::close();
+        }
+        elseif($estat["token_tecnic"]==$_SERVER["HTTP_TOKEN"]){//només es pot editar els camps comentari i estat
+          BdD::connect();
+          BdD::modificarTascaTecnicBD($tasca,$estat);
+          var_dump($estat);
+          BdD::close();
+        }
+        else{
+          header('HTTP/1.1 403 Forbidden');
+        }
+      }
+    }
+
+    /* Function: CrearNovaTasca
+
+      Crea una nova tasca creada amb l'usuari actual
+     */
+    function CrearNovaTasca(){
+      $usuariValid = true;//cridar al mètode per veure segons el token rebut si és o no vàlid i és gestor/admin
+      if($usuariValid){
+        $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
+        BdD::connect();
+        BdD::guardarTascaBD($tasca);
+        BdD::close();
+        header('HTTP/1.1 201 Created');
+      }
     }
 
     /* Function: GenerarTokenIdentificatiu
