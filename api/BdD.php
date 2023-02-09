@@ -44,6 +44,49 @@ class BdD {
 		return $guardat;
 	}
 
+    /* Function: existeixTokenInicialBD
+
+        Retorna un boleà si existeix o no
+
+        Parameters:
+            $token a cercar
+
+        Returns:
+            True o false si existeix o no
+    */
+    public static function existeixTokenInicialBD($token){
+		$output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT *
+                FROM TokenGenerat tg 
+                WHERE token = :token ;
+                "
+            );
+            $query->bindParam(':token', $token);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            $output = count($outcome)>0;
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+	}
+
+      /* Function: loginBD
+
+        Comprova si existeix un usuari amb el mail i password concrets, retorna el seu id i mail
+
+        Parameters:
+            $email, $contrasenya
+
+        Returns:
+            False en cas de no existir, array de 2 posicions 0=id 1=email
+    */
 
     public static function loginBD($email, $contrasenya){
         $output = false;
@@ -72,7 +115,52 @@ class BdD {
         return $output;
     }
 
+      /* Function: guardarTokenIdentificatiuBD
 
+        Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
+
+        Parameters:
+            $tokenIdentificatiu, $id on insertar-lo
+
+        Returns:
+            False o Nombre de rows afectades
+    */
+
+    public static function guardarTokenIdentificatiuBD($tokenIdentificatiu, $id){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                Update Usuari 
+                set token = :token
+                WHERE id_usuari = :id
+                ;
+                "
+            );
+           
+            $query->bindParam(':token', $tokenIdentificatiu);
+            $query->bindParam(':id', $id);
+            $outcome = $query->execute();
+            $output =  $query->rowCount();
+           
+         }
+         catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        return $output;
+    }
+
+
+       /* Function: canviContrasenyaBD
+
+        Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
+
+        Parameters:
+            $token, $contrasenya
+
+        Returns:
+            False o Nombre de rows afectades
+    */
     public static function canviContrasenyaBD($token, $contrasenya){
         $output = false;
         try{
@@ -260,11 +348,12 @@ class BdD {
                         email = :email,
                         rol = :rol,
                         data_baixa = CURRENT_TIMESTAMP
-                        WHERE id_usuari = :id_usuari;
+                        WHERE id_usuari = :id_usuari
+                        ;
                         "
                     );
                 }
-                $query->bindParam('id_usuari', $infoUsuari["id_usuari"]);
+                $query->bindParam(':id_usuari', $infoUsuari["id_usuari"]);
                 $query->bindParam(':nom', $infoUsuari["nom"]);
                 $query->bindParam(':email', $infoUsuari["email"]);
                 $query->bindParam(':rol', $infoUsuari["rol"]);
@@ -275,8 +364,33 @@ class BdD {
                 $output = $e->getMessage();
             }
             return $output;
+        }
 
+        /* Function: updateDataUltimaPeticioBD
+          
+            A partir del token de l'usuari, actualitzar la data de la darrera petició al moment de realització
+           
+           Returns: bool resultat de l'execució
 
+        */  
+        public static function updateDataUltimaPeticioBD($token){
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    UPDATE Usuari 
+                    set data_ultima_peticio = CURRENT_TIMESTAMP 
+                    where token = :token; 
+                    "
+                );
+                $query->bindParam('token', $token);
+                $output = $query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
 
         }
 
