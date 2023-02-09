@@ -209,6 +209,37 @@ class BdD {
 		}
 		return $modificar;
     }
+
+    public static function recuperarLlistatTasquesBD($token){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT tas.id_tasca, tas.titol, tas.descripcio, tas.data_alta, tas.data_inici, tas.data_acabament , tas.prioritat , tas.estat , tas.comentari,
+                id_gestor, id_tecnic, t.nom AS nom_tecnic
+                FROM Tasca tas
+                JOIN Usuari g
+                    ON (g.id_usuari = id_gestor)
+                JOIN Usuari t 
+                    ON (t.id_usuari = id_tecnic)
+                WHERE g.token = :tokenG OR t.token = :tokenT ;
+                "
+            );
+            $query->bindParam(':tokenG', $token);
+            $query->bindParam(':tokenT', $token);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)>0){
+                $output = $outcome;
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+    }
 }
 
 ?>
