@@ -35,11 +35,11 @@ class Server {
             $this->updateDataUltimaPeticio();
             break;
           case "/usuari/llistat":
-            var_dump( $this->consultaUsuaris());
+            echo $this->consultaUsuaris();
             $this->updateDataUltimaPeticio();
             break;
           case "/usuari/llistat_tecnics":
-            var_dump($this->consultaTecnics());
+            echo $this->consultaTecnics();
             $this->updateDataUltimaPeticio();
             break;
           case "/usuari/alta":
@@ -264,6 +264,7 @@ class Server {
             BdD::connect();
             $output = BdD::consultaUsuarisBD();
             BdD::close();
+            $output = json_encode($output);
           }
           else
           {
@@ -288,6 +289,7 @@ class Server {
             BdD::connect();
             $output = BdD::consultaTecnicsBD();
             BdD::close();
+            $output = json_encode($output);
           }
           else
           {
