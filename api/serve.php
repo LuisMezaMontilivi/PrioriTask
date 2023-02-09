@@ -161,9 +161,12 @@ class Server {
     */
     private function login()
     {
-      $email = $_SERVER['HTTP_EMAIL'];
-      $contrasenya = $_SERVER['HTTP_CONTRASENYA'];
-      $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token temporal per headers
+      $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+      $maininfo = json_decode($_SERVER['HTTP_MAININFO'],true);
+      $email = $maininfo["usuari"];
+      $contrasenya = $maininfo["contrasenyaEncriptada"];
+     
+     
       if($this->TokenGeneratServe($token))
       {
         BdD::connect();
@@ -191,6 +194,11 @@ class Server {
           }
           BdD::close();
         }
+        else
+          {
+            header('HTTP/1.1 401 Unauthorised');
+            $output= "no és usuari correcte";
+          }
       }
       return $output;
     }
@@ -204,9 +212,9 @@ class Server {
 
         */
         private function canviaContrasenya(){
+          $maininfo = json_decode($_SERVER['HTTP_MAININFO'],true);
+          $contrasenya = $maininfo["contrasenyaEncriptada"];
           $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
-          $contrasenya = $_SERVER['HTTP_CONTRASENYA'];
-          echo "Ha entrat a la funció";
           //Validació del token actual
           if($this->validaToken($token) != false)
           {
@@ -357,7 +365,7 @@ class Server {
 
         */  
         private function updateDataUltimaPeticio(){
-          $token = $_SERVER['HTTP_TOKEN']; //Obtenim el token per headers
+          
           try{
             BdD::connect();
             $output = BdD::updateDataUltimaPeticioBD($token);
