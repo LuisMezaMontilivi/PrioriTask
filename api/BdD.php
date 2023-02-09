@@ -240,6 +240,299 @@ class BdD {
         }
         return $output;
     }
+    
+    /* Function: loginBD
+        Comprova si existeix un usuari amb el mail i password concrets, retorna el seu id i mail
+        Parameters:
+            $email, $contrasenya
+        Returns:
+            False en cas de no existir, array de 2 posicions 0=id 1=email
+    */
+
+    public static function loginBD($email, $contrasenya){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT  * from Usuari u 
+                where email = :email && contrasenya = :contrasenya
+                ;
+                "
+            );
+            $query->bindParam(':email', $email);
+            $query->bindParam(':contrasenya', $contrasenya);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)>0){
+                $output[0] = $outcome[0]["id_usuari"];
+                $output[1] = $outcome[0]["email"];
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+    }
+
+      /* Function: guardarTokenIdentificatiuBD
+        Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
+        Parameters:
+            $tokenIdentificatiu, $id on insertar-lo
+        Returns:
+            False o Nombre de rows afectades
+    */
+
+    public static function guardarTokenIdentificatiuBD($tokenIdentificatiu, $id){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                Update Usuari 
+                set token = :token
+                WHERE id_usuari = :id
+                ;
+                "
+            );
+           
+            $query->bindParam(':token', $tokenIdentificatiu);
+            $query->bindParam(':id', $id);
+            $outcome = $query->execute();
+            $output =  $query->rowCount();
+           
+         }
+         catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        return $output;
+    }
+
+
+       /* Function: canviContrasenyaBD
+        Retorna un boleà de false o el nombre de rows modificades en cas d'èxit
+        Parameters:
+            $token, $contrasenya
+        Returns:
+            False o Nombre de rows afectades
+    */
+    public static function canviContrasenyaBD($token, $contrasenya){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                Update Usuari 
+                set contrasenya = :contrasenya
+                WHERE token = :token
+                ;
+                "
+            );
+            $query->bindParam(':contrasenya', $contrasenya);
+            $query->bindParam(':token', $token);
+            $outcome = $query->execute();
+            $output =  $query->rowCount();
+           
+         }
+         catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        return $output;
+
+    }
+
+
+
+    /* Function: validaTokenBD
+        A partir del token donat, consulta a la BdD si existeix un usuari amb el determinat token
+        Parameters:
+            $tokenAValidar - token a comprovar
+        Returns: rol del usuari o bé un bool de false en cas de no trobar-lo
+    */
+    public static function validaTokenBD($tokenAValidar){
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                Select rol from Usuari WHERE token = :token ;
+                ;
+                "
+            );
+            $query->bindParam(':token', $tokenAValidar);
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $outcome = $query->fetchAll();
+            if(count($outcome)== 1){
+                $output = $outcome[0]["rol"];
+            }
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+    }
+        /* Function: consultaUsuarisBD
+        Retorna un llistat de tots els usuaris de l'aplicació
+        Returns: array d'usuaris de l'aplicació
+        */
+    public static function consultaUsuarisBD(){
+
+        $output = false;
+        try{
+            $query = (self::$connection)->prepare(
+                "
+                SELECT id_usuari , nom, email , rol, data_alta , data_baixa , data_ultima_peticio  from Usuari u ;
+                ;
+                "
+            );
+            $query->execute();
+            $query->setFetchMode(PDO::FETCH_ASSOC);
+            $output = $query->fetchAll();
+
+        }
+        catch(PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            $output = $e->getMessage();
+        }
+        return $output;
+
+    }
+
+
+    /* Function: consultaTecnicsBD
+        Retorna un llistat de tots els tècnics de l'aplicació amb el seu nom, email i id
+        Returns: array de tècnics de l'aplicació amb el seu nom, email i id
+    */
+        public static function consultaTecnicsBD(){
+
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    SELECT id_usuari , nom , email  from Usuari u WHERE rol ='t';
+                    ;
+                    "
+                );
+                $query->execute();
+                $query->setFetchMode(PDO::FETCH_ASSOC);
+                $output = $query->fetchAll();
+    
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+    
+        }
+
+
+
+         /* Function: creaUsuariBD
+          
+           A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
+           
+           Returns: bool resultat de l'execució
+        */  
+
+        public static function creaUsuariBD($infoUsuari){
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    insert into Usuari (nom, contrasenya, email, rol)
+                    values(:nom, :contrasenya, :email, :rol)
+                    ;
+                    "
+                );
+                $query->bindParam(':nom', $infoUsuari["nom"]);
+                $query->bindParam(':contrasenya', $infoUsuari["contrasenya"]);
+                $query->bindParam(':email', $infoUsuari["email"]);
+                $query->bindParam(':rol', $infoUsuari["rol"]);
+                $output=$query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+
+        }
+
+         /* Function: modificaUsuariBD
+          
+           A partir de les dades rebudes en forma d'array associatiu, inserció del nou usuari amb les dades rebudes i retorn de booleà de l'execució de la query
+           
+           Returns: bool resultat de l'execució
+        */  
+
+        public static function modificaUsuariBD($infoUsuari){
+            $output = false;
+            try{
+                if($infoUsuari["actiu"]){
+                    $query = (self::$connection)->prepare(
+                        "
+                        Update Usuari
+                        set nom = :nom ,
+                        email = :email,
+                        rol = :rol ,
+                        data_baixa = NULL
+                        WHERE id_usuari = :id_usuari;
+                        "
+                    );
+                }
+                else if($infoUsuari["actiu"] == false){
+                    $query = (self::$connection)->prepare(
+                        "
+                        Update Usuari
+                        set nom = :nom ,
+                        email = :email,
+                        rol = :rol,
+                        data_baixa = CURRENT_TIMESTAMP
+                        WHERE id_usuari = :id_usuari
+                        ;
+                        "
+                    );
+                }
+                $query->bindParam(':id_usuari', $infoUsuari["id_usuari"]);
+                $query->bindParam(':nom', $infoUsuari["nom"]);
+                $query->bindParam(':email', $infoUsuari["email"]);
+                $query->bindParam(':rol', $infoUsuari["rol"]);
+                $output=$query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+        }
+
+        /* Function: updateDataUltimaPeticioBD
+          
+            A partir del token de l'usuari, actualitzar la data de la darrera petició al moment de realització
+           
+           Returns: bool resultat de l'execució
+        */  
+        public static function updateDataUltimaPeticioBD($token){
+            $output = false;
+            try{
+                $query = (self::$connection)->prepare(
+                    "
+                    UPDATE Usuari 
+                    set data_ultima_peticio = CURRENT_TIMESTAMP 
+                    where token = :token; 
+                    "
+                );
+                $query->bindParam('token', $token);
+                $output = $query->execute();
+            }
+            catch(PDOException $e) {
+                echo "Error: " . $e->getMessage();
+                $output = $e->getMessage();
+            }
+            return $output;
+
+        }
 }
 
 ?>
