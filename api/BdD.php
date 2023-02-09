@@ -298,9 +298,9 @@ class BdD {
             try{
                 $query = (self::$connection)->prepare(
                     "
-                    Update Usuari
+                    insert into Usuari (nom, contrasenya, email, rol)
                     values(:nom, :contrasenya, :email, :rol)
-                    where id_usuari = :id_usuari;
+                    ;
                     "
                 );
                 $query->bindParam(':nom', $infoUsuari["nom"]);
