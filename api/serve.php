@@ -44,6 +44,10 @@ class Server {
           case "/usuari/modificar":
             var_dump($this->modificaUsuari());
             $this->updateDataUltimaPeticio();
+          case "/usuari/data":
+            $this->RecuperarDataSetUsuaris();
+            $this->updateDataUltimaPeticio();
+            break;
           case "/tasca/crear":
             $this->CrearNovaTasca();
             $this->updateDataUltimaPeticio();
@@ -54,6 +58,10 @@ class Server {
             break;
           case "/tasca/llistat":
             $this->ObtenirLlistatTasques();
+            $this->updateDataUltimaPeticio();
+            break;
+          case "/tasca/data":
+            $this->RecuperarDataSetTasques();
             $this->updateDataUltimaPeticio();
             break;
           default:
@@ -443,7 +451,39 @@ class Server {
           return $output;      
         }
 
+        /* Function: RecuperarDataSetTasques
 
+          Retornarà les estadístiques de les tasques de l'últim mes a admin
+        */
+        private function RecuperarDataSetTasques(){
+          $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
+          if($rolToken == "a"){
+            BdD::connect();
+            $tasques = json_encode(BdD::recuperarEstatTasquesBD());
+            echo $tasques;
+            BdD::close();
+          }
+          else{
+            header("HTTP/1.1 403 Forbidden");
+          }
+        }
+
+        /* Function: RecuperarDataSetUsuaris
+
+          Retornarà les estadístiques d'activitat dels usuaris
+        */
+        private function RecuperarDataSetUsuaris(){
+          $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
+          if($rolToken == "a"){
+            BdD::connect();
+            $usuaris = json_encode(BdD::recuperarEstatUsuarisBD());
+            echo $usuaris;
+            BdD::close();
+          }
+          else{
+            header("HTTP/1.1 403 Forbidden");
+          }
+        }
   
     }
 

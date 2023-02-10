@@ -551,6 +551,74 @@ class BdD {
             return $output;
 
         }
+
+		/* Function: recuperarEstatTasquesBD
+          
+            Obté l'estat de les tasques de l'últim més i les pendents (per començar, en progrés i en incidència) de més temps
+           
+           Returns: Array associatiu amb l'estat de les tasques de l'últim més 
+        */  
+        public static function recuperarEstatTasquesBD(){
+            $output = false;
+			try{
+				$query = (self::$connection)->prepare(
+					"
+					SELECT 'mes_actual' AS mes, estat, COUNT(*) AS tasques
+						FROM Tasca t
+						WHERE data_alta > (CURRENT_TIMESTAMP - INTERVAL 1 MONTH)
+						GROUP BY estat
+					UNION
+					SELECT 'pendents' AS mes, estat, COUNT(*) AS tasques
+						FROM Tasca t
+						WHERE data_alta < (CURRENT_TIMESTAMP - INTERVAL 1 MONTH) AND estat IN ('s','p','e')
+						GROUP BY estat;
+					"
+				);
+				$query->execute();
+				$query->setFetchMode(PDO::FETCH_ASSOC);
+				$outcome = $query->fetchAll();
+				if(count($outcome)>0){
+					$output = $outcome;
+				}
+			}
+			catch(PDOException $e) {
+				echo "Error: " . $e->getMessage();
+				$output = $e->getMessage();
+			}
+			return $output;
+        }
+
+		/* Function: recuperarEstatUsuarisBD
+          
+            Obté l'estat d'activitat dels usuaris en l'últim dia, setmana, més i any
+           
+           Returns: Array associatiu amb l'estat de les usuaris de l'últim més 
+        */  
+        public static function recuperarEstatUsuarisBD(){
+            $output = false;
+			try{
+				$query = (self::$connection)->prepare(
+					"
+					SELECT 
+						(SELECT COUNT(*) FROM Usuari WHERE data_ultima_peticio > (CURRENT_TIMESTAMP - INTERVAL 1 DAY)) AS ultim_dia,
+						(SELECT COUNT(*) FROM Usuari WHERE data_ultima_peticio > (CURRENT_TIMESTAMP - INTERVAL 1 WEEK)) AS ultima_setmana,
+						(SELECT COUNT(*) FROM Usuari WHERE data_ultima_peticio > (CURRENT_TIMESTAMP - INTERVAL 1 MONTH)) AS ultim_mes,
+						(SELECT COUNT(*) FROM Usuari WHERE data_ultima_peticio > (CURRENT_TIMESTAMP - INTERVAL 1 YEAR)) AS ultim_any;
+					"
+				);
+				$query->execute();
+				$query->setFetchMode(PDO::FETCH_ASSOC);
+				$outcome = $query->fetchAll();
+				if(count($outcome)>0){
+					$output = $outcome;
+				}
+			}
+			catch(PDOException $e) {
+				echo "Error: " . $e->getMessage();
+				$output = $e->getMessage();
+			}
+			return $output;
+        }
 }
 
 ?>
