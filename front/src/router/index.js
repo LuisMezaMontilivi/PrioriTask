@@ -17,13 +17,13 @@ const routes = [
     ],
   },
   {
-    path: '/inici_administrador',
-    name: 'inici_administrador',
+    path: '/inici-administrador',
+    name: 'inici-administrador',
     component: iniciAdministradorView
   },
   {
-    path: '/primer_login',
-    name: 'primer_login',
+    path: '/primer-login',
+    name: 'primer-login',
     component: primerLoginView
   },
   {
@@ -42,13 +42,13 @@ const routes = [
     component: calendariView
   },
   {
-    path: '/crea_tasca',
+    path: '/crea-tasca',
     name: 'creaTasca',
     component: creaTascaView
   },
   {
-    path: '/modifica_tasca/:id_tasca',
-    name: 'modifica_tasca',
+    path: '/modifica-tasca/:id-tasca',
+    name: 'modifica-tasca',
     component: modificaTascaView
   },
   {
