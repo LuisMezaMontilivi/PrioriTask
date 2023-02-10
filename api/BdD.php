@@ -17,6 +17,10 @@ class BdD {
     
     /* Function: guardarTokenBD
     
+        Emmagatzema un token no identificatiu a la BdD
+
+        Returns:
+            Boleà si ha fet o no la inserció
     */
     public static function guardarTokenBD($token){
 		$guardat = true;
@@ -73,7 +77,6 @@ class BdD {
 
         Parameters:
             $tasca  -   Array associatiu on tindrà tot el contingut d'una tasca
-
     */
     public static function guardarTascaBD($tasca){
 		$guardat = true;
@@ -104,7 +107,7 @@ class BdD {
             $idTasca -  Tasca a cercar els tokens relacionats
 
         Returns:
-            Array associatiu amb token_gestor i token_tecnic
+            Array associatiu amb token_gestor, token_tecnic, estat i data_inici
     */
     public static function relacionatsTascaBD($idTasca){
 		$output = false;
@@ -144,6 +147,10 @@ class BdD {
 
         Parameters:
             $tasca - Array associatiu amb id, comentari
+            $estat - Array associatiu amb l'estat anterior
+
+        Returns:
+            Retorna un boleà de si s'ha pogut fer o no la modificació
      */
     public static function modificarTascaTecnicBD($tasca,$estat){
         $modificar = true;
@@ -177,6 +184,9 @@ class BdD {
         Parameters:
             $tasca - Array associatiu amb els nous paràmetres de la tasca
             $estat - Array associatiu amb antics estat de la tasca
+
+        Returns:
+            Retorna un boleà de si s'ha pogut fer o no la modificació
      */
     public static function modificarTascaGestorBD($tasca,$estat){
         $modificar = true;
@@ -210,6 +220,14 @@ class BdD {
 		return $modificar;
     }
 
+    /* Function: recuperarLlistatTasquesBD($token)
+
+        Obté el llistat de tasques relacionades amb l'usuari del token
+
+        Returns:
+            Retorna un array d'arrays associatius de les diferents tasques
+
+    */
     public static function recuperarLlistatTasquesBD($token){
         $output = false;
         try{

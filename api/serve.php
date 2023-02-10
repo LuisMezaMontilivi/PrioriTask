@@ -20,12 +20,7 @@ class Server {
       if($method == "PUT"){
         switch($uri){
           case "/token/obtenir":
-            if($_SERVER["HTTP_APIKEY"] == Server::APIKEY){
-              echo $this->ProporcionarTokenInici();
-            }
-            else{
-              header('HTTP/1.1 401 Unauthorized');
-            }
+            $this->ProporcionarTokenInici();            
             break;
           case "/usuari/iniciar":
             echo $this->login();
@@ -51,14 +46,15 @@ class Server {
             $this->updateDataUltimaPeticio();
           case "/tasca/crear":
             $this->CrearNovaTasca();
+            $this->updateDataUltimaPeticio();
             break;
-            
           case "/tasca/modificar":
             $this->ModificarTasca();
+            $this->updateDataUltimaPeticio();
             break;
-            
           case "/tasca/llistat":
             $this->ObtenirLlistatTasques();
+            $this->updateDataUltimaPeticio();
             break;
           default:
             header('HTTP/1.1 404 Not Found');
@@ -74,11 +70,11 @@ class Server {
     }
 
     function ObtenirLlistatTasques(){
-      $rolToken = "t";
+      $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
       if(isset($rolToken)){
         BdD::connect();
         $llistat = json_encode(BdD::recuperarLlistatTasquesBD($_SERVER["HTTP_TOKEN"]));
-        var_dump($llistat);
+        echo $llistat;
         BdD::close();
       }
     }
@@ -88,8 +84,8 @@ class Server {
       Modifica una tasca ja existent si l'usuari actual té permisos de modificació (admin o gestor que l'ha creat)
     */
     function ModificarTasca(){
-      $rolToken = "t";//primer hem d'obtenir el rol del token 
-      if(isset($rolToken) && $rolToken != "a"){//si el token existeix i no es admin
+      $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);//primer hem d'obtenir el rol del token 
+      if(isset($rolToken)){//si el token existeix i no es admin
         $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
         BdD::connect();
         $estat = BdD::relacionatsTascaBD($tasca["id"]);
@@ -115,13 +111,17 @@ class Server {
       Crea una nova tasca creada amb l'usuari actual
      */
     function CrearNovaTasca(){
-      $usuariValid = true;//cridar al mètode per veure segons el token rebut si és o no vàlid i és gestor/admin
+      $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
+      $usuariValid = $rolToken == 'a' || $rolToken == 'g';//cridar al mètode per veure segons el token rebut si és o no vàlid i és gestor/admin
       if($usuariValid){
         $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
         BdD::connect();
         BdD::guardarTascaBD($tasca);
         BdD::close();
         header('HTTP/1.1 201 Created');
+      }
+      else{
+        header('HTTP/1.1 403 Forbidden');
       }
     }
 
@@ -200,12 +200,17 @@ class Server {
       Retorna un Token no identificatiu
     */
     function ProporcionarTokenInici(){
-      $obtenirToken = $this->GeneracioToken();
-      BdD::connect();
-      BdD::guardarTokenBD($obtenirToken);
-      BdD::close();
-      header('HTTP/1.1 201 Created');
-      return $obtenirToken;
+      if($_SERVER["HTTP_APIKEY"] == Server::APIKEY){
+        $obtenirToken = $this->GeneracioToken();
+        BdD::connect();
+        BdD::guardarTokenBD($obtenirToken);
+        BdD::close();
+        header('HTTP/1.1 201 Created');
+        echo $obtenirToken;
+      }
+      else{
+        header('HTTP/1.1 401 Unauthorized');
+      }
     }
     
     private function paths($url) {
