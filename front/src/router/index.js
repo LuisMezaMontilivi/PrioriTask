@@ -1,66 +1,78 @@
-// Composables
 import { createRouter, createWebHistory } from 'vue-router'
+import PrincipalView from '../views/PrincipalView.vue'
+import CrearTascaView from '../views/CrearTascaView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
+import LoginView from '@/views/LoginView.vue'
+import CrearUsuariView from '@/views/CrearUsuariView.vue'
+import CanviContrasenyaView from '@/views/CanviContrasenyaView.vue'
+import LlistatTascaView from '@/views/LlistatTascaView.vue'
+import ModificarTascaView from '@/views/ModificarTascaView.vue'
+import AdminView from '@/views/AdminView.vue'
 
 const routes = [
   {
     path: '/',
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '',
-        name: 'Home',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
-      },
-    ],
+    name: 'principal',
+    component: PrincipalView
   },
   {
-    path: '/inici-administrador',
-    name: 'inici-administrador',
-    component: iniciAdministradorView
+  path: '/login',
+  name: 'login',
+  component: LoginView
   },
   {
-    path: '/primer-login',
-    name: 'primer-login',
-    component: primerLoginView
+    path: '/crear-usuari',
+    name: 'crear-usuari',
+    component: CrearUsuariView
   },
   {
-    path: '/login',
-    name: 'login',
-    component: loginView
+    path: '/modificar-usuari',
+    name: 'modificar-usuari',
+    component: AdminView
   },
   {
-    path: '/taulell',
-    name: 'taulell',
-    component: taulellView
+    path: '/canvi-contrasenya',
+    name: 'canvi-contrasenya',
+    component: CanviContrasenyaView
   },
   {
-    path: '/calendari',
-    name: 'calendari',
-    component: calendariView
+    path: '/crear-tasca',
+    name: 'crear-tasca',
+    component: CrearTascaView
   },
   {
-    path: '/crea-tasca',
-    name: 'creaTasca',
-    component: creaTascaView
+    path: '/modificar-tasca',
+    name: 'modificar-tasca-llista',
+    component: LlistatTascaView
   },
   {
-    path: '/modifica-tasca/:id-tasca',
-    name: 'modifica-tasca',
-    component: modificaTascaView
+    path: '/modificar-tasca/:id(\\d+)',
+    name: 'modificar-tasca',
+    component: ModificarTascaView
   },
   {
-    path: '/usuari/crear',
-    name: 'creaUsuari',
-    component: creaUsuariView
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFoundView
   },
+  {
+    path: '/principal-admin',
+    name: 'principal-admin',
+    component: AdminView
+  },
+  {
+    path: '/about',
+    name: 'about',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  }
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+  history: createWebHistory(),
+  routes
 })
 
 export default router
