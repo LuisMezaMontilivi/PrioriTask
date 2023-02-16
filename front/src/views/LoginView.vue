@@ -88,6 +88,7 @@ export default{
         },
         token: "",
         usr: "",
+        rol:"",
     }),
     methods: {
         tokenInicial(){
@@ -110,6 +111,8 @@ export default{
         sessionStorage.setItem("usuari", this.email);
         sessionStorage.setItem("token", resposta.data.token);
         sessionStorage.setItem("rol", resposta.data.rol);
+        sessionStorage.setItem("logejat", true);
+        this.rol = resposta.data.rol;
         console.log(resposta.data.ultima_peticio);
         if(resposta.data.ultima_peticio == null){
             this.$router.push('/canvi-contrasenya');
@@ -121,8 +124,7 @@ export default{
             this.$router.push('/modificar-tasca');
         }
       })
-    },
-    
+    }    
     },
     beforeMount(){
         this.tokenInicial()

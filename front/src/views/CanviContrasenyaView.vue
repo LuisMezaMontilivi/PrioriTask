@@ -2,30 +2,30 @@
     <v-sheet   class="mx-auto mt-14 centersheet" >
         <v-row justify="center" no-gutters>
             <v-col class="text-left" cols="12">
-                <h1>Crea l'usuari</h1>
+                <h1>Canvia la contrasenya</h1>
             </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-alert
+      variant="outlined"
+      type="warning"
+      prominent
+      border="top"
+      color="error"
+    >
+    És necessari un canvi de contrasenya, en cas de perdua caldrà contactar a l'administrador
+    </v-alert>
+            </v-col>
+
+        </v-row>
+
         <v-row  >
             <v-col cols="12" >
         <v-form validate-on="input" @submit.prevent="submit"  v-model="valid" class="mt-4">
-            <h2>Email</h2>
-            <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="Escriu el teu e-mail"
-            required
-            clearable
-            class="mt-2"
-          ></v-text-field>
-          <h2>Nom i cognoms</h2>
-          <v-text-field
-            v-model="nom"
-            clearable
-            label="Escriu el teu nom"
-            class="mt-2"
-          ></v-text-field>
+           
          
-          <h2>Password Temporal</h2>
+          <h2>Password </h2>
           <v-text-field
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -40,20 +40,23 @@
             class="mt-2"
             @click:append="show1 = !show1"
           ></v-text-field>
+          <h2>Confirma password</h2>
+          <v-text-field
+            v-model="passwordConfirma"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :rules="[rulesConfirma.required, rulesConfirma.min]"
+            :type="show1 ? 'text' : 'Confirma el Password'"
+            name="input-10-1"
+            label="Confirma contrasenya"
+            hint="At least 8 characters"
+            counter
+            required
+            clearable
+            class="mt-2"
+            @click:append="show1 = !show1"
+          ></v-text-field>
 
-          <v-row>
-            <v-col md="5">
-                <v-switch
-             v-model="rol"
-             hide-details
-             inset
-             true-value="g"
-             false-value="t"
-            :label="`Switch: ${rol}`"
-            color="#232323"
-             ></v-switch>
-            </v-col>
-          </v-row>
+       
          
 
             <v-btn 
@@ -62,8 +65,9 @@
           color="primary"
           type="submit"
           size="x-large"
+          @click="canviarContrasenya()"
           >
-          Crea
+          Canvia la contrasenya
           </v-btn>
        
           
@@ -80,36 +84,43 @@
 
 
 <script a>
-
+import axios from 'axios'
 
 export default{
     
     
     data: () => ({
         rol: 'g', 
-      nom: '',
-      valid: false,
-      email: '',
-      emailRules: [
-        value => {
-          if (value) return true
 
-          return 'E-mail is requred.'
-        },
-        value => {
-          if (/.+@.+\..+/.test(value)) return true
-
-          return 'E-mail must be valid.'
-        },
-      ],
       show1: false,
         show2: true,
-        password: 'Password',
+        password: '',
         rules: {
           required: value => !!value || 'Required.',
           min: v => v.length >= 8 || 'Min 8 characters',
         },
+        passwordConfirma: '',
+        rulesConfirma: {
+            required: value => !!value || 'Required.',
+            min: v => v.length >= 8 || 'Min 8 characters',  
+        }
+
     }),
+
+    methods: {
+           canviarContrasenya(){
+      axios.put("http://localhost/api/usuari/contrasenya",{},{
+        headers: {'token' : sessionStorage.token,
+         'maininfo':'{"contrasenyaEncriptada": "'+ this.password +'"}' }
+      })
+      .then(resposta=>{
+        if(resposta.data){
+            this.$router.push('/')
+        }
+        else{window.alert("Contrasenya no canviada, torna-ho a intentar")}
+      })
+    }
+    }
     
     
 

@@ -2,7 +2,7 @@
     <v-sheet   class="mx-auto mt-14 centersheet" >
         <v-row justify="center" no-gutters>
             <v-col class="text-left" cols="12">
-                <h1>Crea l'usuari</h1>
+                <h1>Modifica l'usuari</h1>
             </v-col>
         </v-row>
         <v-row  >
@@ -12,7 +12,7 @@
             <v-text-field
             v-model="email"
             :rules="emailRules"
-            label="Escriu el teu e-mail"
+            label= ""
             required
             clearable
             class="mt-2"
@@ -21,26 +21,12 @@
           <v-text-field
             v-model="nom"
             clearable
+            :rules="nomRules"
             label="Escriu el teu nom"
             class="mt-2"
           ></v-text-field>
          
-          <h2>Password Temporal</h2>
-          <v-text-field
-            v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rules.required, rules.min]"
-            :type="show1 ? 'text' : 'password'"
-            name="input-10-1"
-            label="Escriu la teva contrasenya"
-            hint="At least 8 characters"
-            counter
-            required
-            clearable
-            class="mt-2"
-            @click:append="show1 = !show1"
-          ></v-text-field>
-
+          
           <v-row>
             <v-col md="5">
                 <v-switch
@@ -49,8 +35,20 @@
              inset
              true-value="g"
              false-value="t"
-             :label="`Rol: ${rol}`"
-            color="#232323"
+            :label="`Rol: ${rol}`"
+            color="primary"
+             ></v-switch>
+            </v-col>
+            <v-col md="5">
+                <v-switch
+             v-model="actiu"
+             hide-details
+             inset
+             true-value="true"
+             false-value="false"
+             
+            :label="`Actiu: ${actiu}`"
+            color="primary"
              ></v-switch>
             </v-col>
           </v-row>
@@ -62,9 +60,9 @@
           color="primary"
           type="submit"
           size="x-large"
-          @click="altaUsuari()"
+          @click="modificaUsuari()"
           >
-          Crea
+          Modifica
           </v-btn>
        
           
@@ -78,19 +76,19 @@
 
 
 </template>
-
-
 <script>
 import axios from 'axios'
 
 export default{
     
-    
     data: () => ({
-        rol: 'g', 
-      nom: '',
-      valid: false,
-      email: '',
+        dadesRaw: {},
+        actiu: false,
+        id_usuari :"",
+      rol: 'g', 
+      nom: "",
+      valid: true,
+      email: "",
       emailRules: [
         value => {
           if (value) return true
@@ -103,31 +101,46 @@ export default{
           return 'E-mail must be valid.'
         },
       ],
-      show1: false,
-        show2: true,
-        password: 'Password',
-        rules: {
-          required: value => !!value || 'Required.',
-          min: v => v.length >= 8 || 'Min 8 characters',
+
+      nomRules: [
+        value => {
+            if(value) return true
+            return 'El nom és necessàri.'
         },
+        
+           value => (value || '').length <= 50 || 'Max 50 characters',
+        
+      ]
+     
     }),
     methods: {
 
-      altaUsuari(){
-      axios.put("http://localhost/api/usuari/alta",{},{
+      modificaUsuari(){
+      axios.put("http://localhost/api/usuari/modificar",{},{
         headers: {'token' : sessionStorage.token ,
-        'informacioUsuari':'{"nom": "'+ this.nom + '", "contrasenya": "'+ this.password  + '", "email": "'+ this.email  + '", "rol": "' + this.rol   +'"}' 
+        'informacioUsuari':'{"id_usuari":'+this.id_usuari+',"nom":"'+this.nom+'","email":"'+this.email+'","rol":"'+this.rol+'","actiu":'+this.actiu+'}'
                   
                 }
       })
       .then(resposta=>{
         console.log(resposta);
         if(resposta.data){
-          this.$router.push('/')
+          this.$router.push('/llista-usuari')
         }
-        else{window.alert("Usuari no ha pogut ser creat, torna-ho a intentar")}
+        else{window.alert("Usuari no ha pogut ser modificat, torna-ho a intentar")}
       })
     }
+  },
+  beforeMount(){
+
+        this.dadesRaw = JSON.parse(sessionStorage.getItem("usuariAModificar"));
+        console.log(this.dadesRaw);
+        this.nom = this.dadesRaw.nom;
+        this.email = this.dadesRaw.email;
+        this.rol = this.dadesRaw.rol;
+        this.id_usuari = this.dadesRaw.id_usuari;
+        
+
   }
     
     

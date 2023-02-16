@@ -5,9 +5,8 @@ import NotFoundView from '../views/NotFoundView.vue'
 import LoginView from '@/views/LoginView.vue'
 import CrearUsuariView from '@/views/CrearUsuariView.vue'
 import CanviContrasenyaView from '@/views/CanviContrasenyaView.vue'
-import LlistatTascaView from '@/views/LlistatTascaView.vue'
-import ModificarTascaView from '@/views/ModificarTascaView.vue'
-import AdminView from '@/views/AdminView.vue'
+import LlistaUsuarisView from '@/views/LlistaUsuarisView.vue'
+import ModificarUsuariView from '@/views/ModificarUsuariView.vue'
 
 const routes = [
   {
@@ -26,39 +25,31 @@ const routes = [
     component: CrearUsuariView
   },
   {
-    path: '/modificar-usuari',
-    name: 'modificar-usuari',
-    component: AdminView
-  },
-  {
     path: '/canvi-contrasenya',
     name: 'canvi-contrasenya',
     component: CanviContrasenyaView
   },
+  {
+    path: '/llista-usuari',
+    name: 'llista-usuari',
+    component: LlistaUsuarisView
+  },
+  {
+    path: '/modificar-usuari/:id_usuari(\\d+)',
+    name: 'modificar-usuari',
+    component: ModificarUsuariView,
+    
+  },
+
   {
     path: '/crear-tasca',
     name: 'crear-tasca',
     component: CrearTascaView
   },
   {
-    path: '/modificar-tasca',
-    name: 'modificar-tasca-llista',
-    component: LlistatTascaView
-  },
-  {
-    path: '/modificar-tasca/:id(\\d+)',
-    name: 'modificar-tasca',
-    component: ModificarTascaView
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: NotFoundView
-  },
-  {
-    path: '/principal-admin',
-    name: 'principal-admin',
-    component: AdminView
   },
   {
     path: '/about',
