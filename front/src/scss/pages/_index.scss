@@ -1,0 +1,85 @@
+// hero block
+.heroBlock {
+  position: relative;
+
+  .v-window {
+    @media only screen and (max-width: 599px) {
+      height: 220px !important;
+    }
+  }
+
+  .v-image__image {
+    &:before {
+      content: '';
+      background: rgba(0, 0, 0, 0.3);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+  }
+
+  .title {
+    color: $white;
+    position: relative;
+    z-index: 2;
+    font: 300 50px/1.6 $primary-font !important;
+  }
+}
+
+// latest post block
+.latestPostBlock {
+  background: darken($white, 2%);
+
+  .v-card__title {
+    background: rgba(0,0,0,0.3);
+  }
+}
+
+.divider{
+  float: left;
+  width: 50%;
+}
+
+.divider3{
+  float: left;
+  width: 33%;
+}
+
+.prior {
+  float: left;
+  width: 80%;
+  padding-top: 14px;
+}
+
+.txtPrio {
+  float: left;
+  width: 20%;
+  padding-bottom: 30px;
+}
+
+.send {
+  width: 80%;
+  margin: auto;
+}
+
+.centersheet{
+  width: 800px;
+}
+
+@media screen and (max-width: 800px) {
+  .divider{
+    width: 100%;
+  }
+  .divider3{
+    width: 100%;
+  }
+  .centersheet{
+    width: 100%;
+  }
+  .txtPrio{
+    padding-bottom: 0px;
+  }
+}

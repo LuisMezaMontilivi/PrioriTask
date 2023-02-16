@@ -231,7 +231,7 @@ class Server {
     A partir dels Headers rebuts, validació de token inicial, login de l'usuari contra la BdD, 
     creació del nou token a partir de les dades del usuari + token prèvi, inserció de nou token a la BdD, inserció de hora de la darrera petició de l'usuari a la BdD
 
-    Returns: boolea false si el procés no és fructífer/ array amb id,mail + headers corresponents: 200 OK o 401 Unauthorised
+    Returns: boolea false si el procés no és fructífer/ array amb [token, ultima_peticio] + headers corresponents: 200 OK o 401 Unauthorised
 
     */
     private function login()
@@ -254,10 +254,12 @@ class Server {
           {
              // Crear token
             $tokenIdentificatiu = $this->GenerarTokenIdentificatiu($output[0], $output[1]);
-            $output = BdD::guardarTokenIdentificatiuBD($tokenIdentificatiu, $output[0]);
-            if($output == 1)
+            $outputToken = BdD::guardarTokenIdentificatiuBD($tokenIdentificatiu, $output[0]);
+            if($outputToken == 1)
             {
-              $output = $tokenIdentificatiu;
+              $outputFinal["ultima_peticio"] = $output[2];
+              $outputFinal["rol"] = $output[3];
+              $outputFinal["token"] = $tokenIdentificatiu;
               header('HTTP/1.1 200 OK');
             }
            
@@ -265,17 +267,18 @@ class Server {
           else
           {
             header('HTTP/1.1 401 Unauthorised');
-            $output= "no és usuari correcte";
+            $outputFinal= "no és usuari correcte";
           }
           BdD::close();
         }
         else
           {
             header('HTTP/1.1 401 Unauthorised');
-            $output= "no és usuari correcte";
+            $outputFinal= "no és usuari correcte";
           }
       }
-      return $output;
+      $outputFinal = json_encode($outputFinal, true);
+      return $outputFinal;
     }
 
 
@@ -443,7 +446,7 @@ class Server {
           
           try{
             BdD::connect();
-            $output = BdD::updateDataUltimaPeticioBD($token);
+            $output = BdD::updateDataUltimaPeticioBD($_SERVER["HTTP_TOKEN"]);
             BdD::close();
           }
           catch(Exception $e)
