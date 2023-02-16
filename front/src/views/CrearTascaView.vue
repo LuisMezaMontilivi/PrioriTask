@@ -60,7 +60,7 @@ export default {
     },
     methods: {
         recuperarTecnics() {
-            axios.put("http://localhost/api/usuari/llistat_tecnics", {}, {
+            axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/llistat_tecnics", {}, {
                 headers: { 'token': sessionStorage.getItem("token") }
             })
                 .then(resposta => {
@@ -69,7 +69,7 @@ export default {
         },
         crearTasca() {
             if(this.titol != "" && this.descripcio != "" && this.tecnicAssignat !== undefined && this.tecnicAssignat != ""){
-                axios.put("http://localhost/api/tasca/crear", {}, {
+                axios.put("http://prioritask.daw.institutmontilivi.cat/api/tasca/crear", {}, {
                 headers: {
                     'token': sessionStorage.getItem("token"),
                     'tasca': '{"titol":"'+this.titol+'","descripcio":"'+this.descripcio+'","prioritat":'+this.prioritat+',"estat":"s","gestor":"'+sessionStorage.getItem("token")+'","tecnic":'+this.tecnicAssignat+'}'

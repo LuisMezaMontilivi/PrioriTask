@@ -90,7 +90,7 @@ export default{
 
     methods: {
            canviarContrasenya(){
-      axios.put("http://localhost/api/usuari/contrasenya",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/contrasenya",{},{
         headers: {'token' : sessionStorage.token,
          'maininfo':'{"contrasenyaEncriptada": "'+ this.password +'"}' }
       })

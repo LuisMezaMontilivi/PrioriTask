@@ -116,7 +116,7 @@ export default{
     methods: {
 
       modificaUsuari(){
-      axios.put("http://localhost/api/usuari/modificar",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/modificar",{},{
         headers: {'token' : sessionStorage.token ,
         'informacioUsuari':'{"id_usuari":'+this.id_usuari+',"nom":"'+this.nom+'","email":"'+this.email+'","rol":"'+this.rol+'","actiu":'+this.actiu+'}'
                   

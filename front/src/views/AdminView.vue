@@ -75,7 +75,7 @@ export default {
     methods: {
         //fer les peticions ajax per recuperar les estadístiques
         recuperarEstadistiquesUsuaris() {
-            axios.put("http://localhost/api/usuari/data", {}, {
+            axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/data", {}, {
                 headers: {
                     'token': sessionStorage.getItem("token")
                 }
@@ -90,7 +90,7 @@ export default {
                 })
         },
         recuperarEstadistiquesTasques() {
-            axios.put("http://localhost/api/tasca/data", {}, {
+            axios.put("http://prioritask.daw.institutmontilivi.cat/api/tasca/data", {}, {
                 headers: {
                     'token': sessionStorage.getItem("token")
                 }

@@ -114,7 +114,7 @@ export default{
     methods: {
 
       altaUsuari(){
-      axios.put("http://localhost/api/usuari/alta",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/alta",{},{
         headers: {'token' : sessionStorage.token ,
         'informacioUsuari':'{"nom": "'+ this.nom + '", "contrasenya": "'+ this.password  + '", "email": "'+ this.email  + '", "rol": "' + this.rol   +'"}' 
                   

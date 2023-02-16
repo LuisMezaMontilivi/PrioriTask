@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     recuperarTasques() {
-      axios.put("http://localhost/api/tasca/llistat", {}, {
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/tasca/llistat", {}, {
         headers: { 'token': sessionStorage.getItem("token") }
       })
         .then(resposta => {

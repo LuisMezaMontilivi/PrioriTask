@@ -50,7 +50,7 @@ export default{
             this.$router.push("/modificar-usuari/" + usuari.id_usuari);
         },
     llistatUsuaris(){
-      axios.put("http://localhost/api/usuari/llistat",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/llistat",{},{
         headers: {'token' : sessionStorage.token}
       })
       .then(resposta=>{

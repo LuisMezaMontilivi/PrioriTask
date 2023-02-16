@@ -91,7 +91,7 @@ export default{
     }),
     methods: {
         tokenInicial(){
-      axios.put("http://localhost/api/token/obtenir",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/token/obtenir",{},{
         headers: {'apikey': "GuillemEsUnOient"}
       }
       )
@@ -100,7 +100,7 @@ export default{
         })
     },
     iniciarSessio(){
-      axios.put("http://localhost/api/usuari/iniciar",{},{
+      axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/iniciar",{},{
         headers: {'token' : this.token,
                   'maininfo':'{"usuari": "'+ this.email + '", "contrasenyaEncriptada": "'+ this.password +'"}' }
                   
