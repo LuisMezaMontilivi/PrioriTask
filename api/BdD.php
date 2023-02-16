@@ -83,7 +83,7 @@ class BdD {
 		try{
 			$consulta = (BdD::$connection)->prepare("
                 INSERT INTO Tasca (titol,descripcio,prioritat,estat,id_gestor,id_tecnic)
-                VALUES (:titol, :descripcio, :prioritat, :estat, :gestor, :tecnic);				
+                VALUES (:titol, :descripcio, :prioritat, :estat, ( SELECT id_usuari FROM Usuari WHERE token = :gestor ), :tecnic);				
 			");
 			$consulta->bindParam('titol',$tasca["titol"]);
             $consulta->bindParam('descripcio',$tasca["descripcio"]);
@@ -264,7 +264,7 @@ class BdD {
         Parameters:
             $email, $contrasenya
         Returns:
-            False en cas de no existir, array de 2 posicions 0=id 1=email
+            False en cas de no existir, array de 3 posicions 0=id 1=email 2= ultima_peticio 3= rol
     */
 
     public static function loginBD($email, $contrasenya){
@@ -285,6 +285,8 @@ class BdD {
             if(count($outcome)>0){
                 $output[0] = $outcome[0]["id_usuari"];
                 $output[1] = $outcome[0]["email"];
+                $output[2] = $outcome[0]["data_ultima_peticio"];
+                $output[3] = $outcome[0]["rol"];
             }
         }
         catch(PDOException $e) {
