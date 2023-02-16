@@ -10,16 +10,41 @@
                 <v-toolbar-title class="d-flex justify-left">PrioriTask</v-toolbar-title>
             </v-col>
         </v-row>
-        <v-toolbar-items>
+        <v-toolbar-items v-if="infoHeader.rol == 'a'">
             <v-btn v-for="btn in botons" :key="btn" @click="reroute(btn.ruta)" class="text-decoration-underline">
                     {{btn.txt}}
             </v-btn>
             <v-spacer></v-spacer>
-                
                 <v-btn v-if="!infoHeader.logejat" color="pink" @click="reroute('/login')">Iniciar Sessió</v-btn>
                 <v-btn v-if="infoHeader.logejat" color="pink" @click="logout()">Logout</v-btn>
-           
         </v-toolbar-items>
+
+        <v-toolbar-items v-if="infoHeader.rol == undefined">
+           
+            <v-spacer></v-spacer>
+                <v-btn v-if="!infoHeader.logejat" color="pink" @click="reroute('/login')">Iniciar Sessió</v-btn>
+                <v-btn v-if="infoHeader.logejat" color="pink" @click="logout()">Logout</v-btn>
+        </v-toolbar-items>
+
+        <v-toolbar-items v-if="infoHeader.rol == 't'">
+            <v-btn v-for="btn in botonsTecnic" :key="btn" @click="reroute(btn.ruta)" class="text-decoration-underline">
+                    {{btn.txt}}
+            </v-btn>
+           <v-spacer></v-spacer>
+               <v-btn v-if="!infoHeader.logejat" color="pink" @click="reroute('/login')">Iniciar Sessió</v-btn>
+               <v-btn v-if="infoHeader.logejat" color="pink" @click="logout()">Logout</v-btn>
+       </v-toolbar-items>
+
+       <v-toolbar-items v-if="infoHeader.rol == 'g'">
+            <v-btn v-for="btn in botonsGestor" :key="btn" @click="reroute(btn.ruta)" class="text-decoration-underline">
+                    {{btn.txt}}
+            </v-btn>
+           <v-spacer></v-spacer>
+               <v-btn v-if="!infoHeader.logejat" color="pink" @click="reroute('/login')">Iniciar Sessió</v-btn>
+               <v-btn v-if="infoHeader.logejat" color="pink" @click="logout()">Logout</v-btn>
+       </v-toolbar-items>
+
+        
 
     </v-app-bar>
 
@@ -31,6 +56,7 @@ export default {
     props: ["infoHeader"],
     data() {
         return {
+            
             // Array que guardarà els diferents botons amb les rutes que executaran
             botons: [
                 {   txt: "Crear Usuari",
@@ -41,7 +67,19 @@ export default {
                     ruta: "/crear-tasca" },
                 {   txt: "Modificar Tasca",
                     ruta: "/modificar-tasca" },
+            ],
+            botonsGestor: [
+            {   txt: "Crear Tasca",
+                    ruta: "/crear-tasca" },
+                {   txt: "Modificar Tasca",
+                    ruta: "/modificar-tasca" },
+            ],
+            botonsTecnic: [
+            {   txt: "Modificar Tasca",
+                    ruta: "/modificar-tasca" },
+
             ]
+
         }
     },
     methods: {

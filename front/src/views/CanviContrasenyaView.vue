@@ -40,21 +40,7 @@
             class="mt-2"
             @click:append="show1 = !show1"
           ></v-text-field>
-          <h2>Confirma password</h2>
-          <v-text-field
-            v-model="passwordConfirma"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rulesConfirma.required, rulesConfirma.min]"
-            :type="show1 ? 'text' : 'Confirma el Password'"
-            name="input-10-1"
-            label="Confirma contrasenya"
-            hint="At least 8 characters"
-            counter
-            required
-            clearable
-            class="mt-2"
-            @click:append="show1 = !show1"
-          ></v-text-field>
+          
 
        
          
@@ -90,7 +76,6 @@ export default{
     
     
     data: () => ({
-        rol: 'g', 
 
       show1: false,
         show2: true,
@@ -99,11 +84,7 @@ export default{
           required: value => !!value || 'Required.',
           min: v => v.length >= 8 || 'Min 8 characters',
         },
-        passwordConfirma: '',
-        rulesConfirma: {
-            required: value => !!value || 'Required.',
-            min: v => v.length >= 8 || 'Min 8 characters',  
-        }
+       
 
     }),
 

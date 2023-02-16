@@ -47,8 +47,7 @@
        
           
         </v-form>
-        <h3>{{ token }}</h3>
-        <h3>{{ usr }}</h3>
+
     </v-col>
     </v-row>
         
