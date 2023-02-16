@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" sm="1">
                 <router-link :to="'/'">
-                <v-img src="../assets/logo.svg" contain max-height="35px" />
+                <v-img src="../assets/logo.png" contain max-height="35px" />
                 </router-link>
             </v-col>
             <v-col cols="12" sm="2">
