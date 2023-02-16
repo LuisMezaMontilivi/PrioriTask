@@ -43,6 +43,28 @@
   width: 50%;
 }
 
+.divider3{
+  float: left;
+  width: 33%;
+}
+
+.prior {
+  float: left;
+  width: 80%;
+  padding-top: 14px;
+}
+
+.txtPrio {
+  float: left;
+  width: 20%;
+  padding-bottom: 30px;
+}
+
+.send {
+  width: 80%;
+  margin: auto;
+}
+
 .centersheet{
   width: 800px;
 }
@@ -56,5 +78,8 @@
   }
   .centersheet{
     width: 100%;
+  }
+  .txtPrio{
+    padding-bottom: 0px;
   }
 }

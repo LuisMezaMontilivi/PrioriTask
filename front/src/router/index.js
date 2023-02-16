@@ -7,6 +7,9 @@ import CrearUsuariView from '@/views/CrearUsuariView.vue'
 import CanviContrasenyaView from '@/views/CanviContrasenyaView.vue'
 import LlistaUsuarisView from '@/views/LlistaUsuarisView.vue'
 import ModificarUsuariView from '@/views/ModificarUsuariView.vue'
+import AdminView from '@/views/AdminView.vue'
+import ModificarTascaView from '@/views/ModificarTascaView.vue'
+import LlistatTascaView from '@/views/LlistatTascaView.vue'
 
 const routes = [
   {
@@ -40,11 +43,25 @@ const routes = [
     component: ModificarUsuariView,
     
   },
-
   {
     path: '/crear-tasca',
     name: 'crear-tasca',
     component: CrearTascaView
+  },
+  {
+    path: '/modificar-tasca',
+    name: 'modificar-tasca-llista',
+    component: LlistatTascaView
+  },
+  {
+    path: '/modificar-tasca/:id(\\d+)',
+    name: 'modificar-tasca',
+    component: ModificarTascaView
+  },
+  {
+    path: '/principal-admin',
+    name: 'principal-admin',
+    component: AdminView
   },
   {
     path: '/:pathMatch(.*)*',
