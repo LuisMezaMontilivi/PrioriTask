@@ -68,17 +68,31 @@ export default {
                 })
         },
         crearTasca() {
+            var data = {
+                titol: this.titol,
+                descripcio: this.descripcio,
+                prioritat: this.prioritat,
+                estat: "s",
+                gestor: sessionStorage.getItem("token"),
+                tecnic: this.tecnicAssignat
+            }
+
+            console.log(JSON.stringify(data));
+
             if(this.titol != "" && this.descripcio != "" && this.tecnicAssignat !== undefined && this.tecnicAssignat != ""){
                 axios.put("http://prioritask.daw.institutmontilivi.cat/api/tasca/crear", {}, {
                 headers: {
                     'token': sessionStorage.getItem("token"),
-                    'tasca': '{"titol":"'+this.titol+'","descripcio":"'+this.descripcio+'","prioritat":'+this.prioritat+',"estat":"s","gestor":"'+sessionStorage.getItem("token")+'","tecnic":'+this.tecnicAssignat+'}'
+                    'tasca': JSON.stringify(data)
                 }
                 })
                     .then(resposta => {
                         var codi = resposta.status;
                         if(codi=='201')
                             this.$router.push('/modificar-tasca');
+                    })
+                    .catch(function(error){
+                        console.log(error)
                     })
             }
         }
