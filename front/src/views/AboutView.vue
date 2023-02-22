@@ -3,13 +3,20 @@
     <div class="about">
       <h1>Informació legal i ús de cookies</h1>
       <div>
-        A través d'aquest lloc web no es demanen dades de caràcter personal de les persones usuàries sense el seu coneixement, ni es cedeixen a tercers.
+        Benvingut a PrioriTask, on valorem la privacitat i la protecció de dades dels nostres usuaris. Volem assegurar-nos que entengui com gestionem la seva informació personal en utilitzar el nostre lloc web.
         <br/><br/>
-        Amb la finalitat d'oferir-vos el millor servei i amb l'objecte de facilitar-ne l'ús, s'analitzen el nombre de pàgines visitades, el nombre de visites, així com l'activitat de les persones visitants i la seva freqüència d'utilització. A aquest efecte, l‟Agència Espanyola de Protecció de Dades (PrioriTask) utilitza la informació estadística elaborada pel Proveïdor de Serveis d‟Internet.
+        A PrioriTask, utilitzem la seva adreça IP únicament la primera vegada que accedeix a la nostra pàgina web per identificar la seva connexió i oferir-li una millor experiència. No obstant, un cop s'ha registrat, li proporcionem un identificador únic, el que ens permet personalitzar la seva experiència i oferir-li un millor servei.
         <br/><br/>
-        PrioriTask no utilitza galetes per recollir informació de les persones usuàries, ni registra les adreces IP d'accés. Únicament s'utilitzen cookies pròpies, de sessió, amb finalitat tècnica (aquelles que permeten la navegació a través del lloc web i la utilització de les diferents opcions i serveis que hi existeixen).
+        És important destacar que no compartim ni venem les seves dades personals a tercers. Només utilitzem la informació recopilada per millorar els nostres serveis i oferir una experiència d'usuari més eficient i personalitzada.
         <br/><br/>
-        El portal del qual és titular PrioriTask conté enllaços a llocs web de tercers, les polítiques de privadesa dels quals són alienes a la de PrioriTask. En accedir a aquests llocs web vostè pot decidir si accepta les seves polítiques de privadesa i de cookies. Amb caràcter general, si navega per internet vostè pot acceptar o rebutjar les galetes de tercers des de les opcions de configuració del seu navegador.
+        No utilitzem galetes per al seguiment del comportament dels nostres usuaris en línia. En el seu lloc, utilitzem l'emmagatzematge de sessió de JavaScript per mantenir-lo identificat mentre utilitza la nostra aplicació. Aquest emmagatzematge temporal ens permet associar la seva activitat en el lloc amb la seva sessió, la qual cosa ens ajuda a millorar la funcionalitat i la usabilitat del nostre lloc web.
+        <br/><br/>
+        Ens comprometem a complir amb totes les lleis i regulacions de protecció de dades aplicables en relació amb l'ús del nostre lloc web i a prendre mesures per protegir la seva informació personal. Si té alguna pregunta o inquietud sobre la nostra política de privacitat i protecció de dades, no dubti a posar-se en contacte amb nosaltres. Estem aquí per ajudar-lo.
+        <br/><br/>
+        Atentament, l’equip de PrioriTask
+        <br/><br/>
+        info@prioritask.cat
+
       </div>
     </div>
   </v-sheet>
