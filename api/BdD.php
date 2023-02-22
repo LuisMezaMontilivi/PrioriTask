@@ -1,4 +1,7 @@
 <?php
+/*
+	Class: BdD
+*/
 class BdD {
 	
     private static $connection;
