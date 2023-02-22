@@ -7,7 +7,10 @@
                 </router-link>
             </v-col>
             <v-col cols="12" sm="2">
-                <v-toolbar-title class="d-flex justify-left">PrioriTask</v-toolbar-title>
+                <v-toolbar-title class="d-flex justify-left">
+                    <div v-if="infoHeader.rol == 'a'" class="direccio" @click="reroute('/principal-admin')">PrioriTask</div>
+                    <div v-else>PrioriTask</div>
+                </v-toolbar-title>
             </v-col>
         </v-row>
         <v-toolbar-items v-if="infoHeader.rol == 'a'">
@@ -56,7 +59,10 @@
       >
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>PrioriTask</v-toolbar-title>
+        <v-toolbar-title>
+            <div v-if="infoHeader.rol == 'a'" class="direccio" @click="reroute('/principal-admin')">PrioriTask</div>
+            <div v-else>PrioriTask</div>
+        </v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -158,7 +164,9 @@ export default {
 </script>
 
 <style scoped>
-
+    .direccio{
+        cursor: pointer;
+    }
 </style>
 
 

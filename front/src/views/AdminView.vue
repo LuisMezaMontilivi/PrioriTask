@@ -7,7 +7,7 @@
             <v-btn class="mt-4" block color="primary" size="x-large" route to='/crear-usuari'>
                 Crear usuari
             </v-btn>
-            <v-btn class="mt-4" block color="primary" size="x-large" route to='/modificar-usuari'>
+            <v-btn class="mt-4" block color="primary" size="x-large" route to='/llista-usuari'>
                 Modificar usuari
             </v-btn>
             <v-btn class="mt-4" block color="primary" size="x-large" route to='/crear-tasca'>
