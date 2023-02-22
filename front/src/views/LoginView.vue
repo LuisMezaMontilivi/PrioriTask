@@ -61,6 +61,7 @@
 
 <script>
 import axios from 'axios'
+import sha256 from 'crypto-js/sha256';
 export default{
 
     data: () => ({
@@ -102,7 +103,7 @@ export default{
     iniciarSessio(){
       axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/iniciar",{},{
         headers: {'token' : this.token,
-                  'maininfo':'{"usuari": "'+ this.email + '", "contrasenyaEncriptada": "'+ this.password +'"}' }
+                  'maininfo':'{"usuari": "'+ this.email + '", "contrasenyaEncriptada": "'+ sha256(this.password) +'"}' }
                   
       })
       .then(resposta=>{
