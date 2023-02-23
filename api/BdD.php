@@ -1,14 +1,11 @@
 <?php
-/*
-	Class: BdD
-*/
 class BdD {
 	
     private static $connection;
 
 	//La base de dades està posada de manera fixa al codi
     public static function connect() {
-        self::$connection = new PDO("mysql:host=localhost;dbname=PrioriTaskBD", "adminer", "1234");
+        self::$connection = new PDO("mysql:host=localhost;dbname=PrioriTaskBD", "adminer", "Bhun@89ble.oient");
     }
 
 	//Tancar conexió a la BdD
