@@ -71,6 +71,7 @@
 
 <script a>
 import axios from 'axios'
+import sha256 from 'crypto-js/sha256';
 
 export default{
     
@@ -92,7 +93,7 @@ export default{
            canviarContrasenya(){
       axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/contrasenya",{},{
         headers: {'token' : sessionStorage.token,
-         'maininfo':'{"contrasenyaEncriptada": "'+ this.password +'"}' }
+         'maininfo':'{"contrasenyaEncriptada": "'+ sha256(this.password) +'"}' }
       })
       .then(resposta=>{
         if(resposta.data){

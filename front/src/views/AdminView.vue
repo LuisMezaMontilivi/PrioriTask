@@ -7,7 +7,7 @@
             <v-btn class="mt-4" block color="primary" size="x-large" route to='/crear-usuari'>
                 Crear usuari
             </v-btn>
-            <v-btn class="mt-4" block color="primary" size="x-large" route to='/modificar-usuari'>
+            <v-btn class="mt-4" block color="primary" size="x-large" route to='/llista-usuari'>
                 Modificar usuari
             </v-btn>
             <v-btn class="mt-4" block color="primary" size="x-large" route to='/crear-tasca'>
@@ -83,10 +83,10 @@ export default {
                 .then(resposta => {
                     console.log(resposta.data);
                     this.cruUsuaris = resposta.data[0];
-                    this.dadesUsuaris.push(['Dia', this.cruUsuaris.ultim_dia]);
-                    this.dadesUsuaris.push(['Setmana', this.cruUsuaris.ultima_setmana]);
-                    this.dadesUsuaris.push(['Mes', this.cruUsuaris.ultim_mes]);
-                    this.dadesUsuaris.push(['Any', this.cruUsuaris.ultim_any]);
+                    this.dadesUsuaris.push(['Dia', parseInt(this.cruUsuaris.ultim_dia)]);
+                    this.dadesUsuaris.push(['Setmana', parseInt(this.cruUsuaris.ultima_setmana)]);
+                    this.dadesUsuaris.push(['Mes', parseInt(this.cruUsuaris.ultim_mes)]);
+                    this.dadesUsuaris.push(['Any', parseInt(this.cruUsuaris.ultim_any)]);
                 })
         },
         recuperarEstadistiquesTasques() {
@@ -98,11 +98,11 @@ export default {
                 .then(resposta => {
                     this.cruTasques = resposta.data;
                     var formatat = this.formatarTasques(this.cruTasques);
-                    this.dadesTasques.push(['Per fer',formatat.mes_actual.s]);
-                    this.dadesTasques.push(['En progrés',formatat.mes_actual.p]);
-                    this.dadesTasques.push(['Fet',formatat.mes_actual.d]);
-                    this.dadesTasques.push(['Incidència',formatat.mes_actual.e]);
-                    this.dadesTasques.push(['Arxivat',formatat.mes_actual.a]);
+                    this.dadesTasques.push(['Per fer',parseInt(formatat.mes_actual.s)]);
+                    this.dadesTasques.push(['En progrés',parseInt(formatat.mes_actual.p)]);
+                    this.dadesTasques.push(['Fet',parseInt(formatat.mes_actual.d)]);
+                    this.dadesTasques.push(['Incidència',parseInt(formatat.mes_actual.e)]);
+                    this.dadesTasques.push(['Arxivat',parseInt(formatat.mes_actual.a)]);
                 })
         },
         //classificar per la propietat mes els diferents moments del gràfic, faltaría aprofitar la informació de pendents per informar-ho a la pàgina d'admin

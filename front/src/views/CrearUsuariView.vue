@@ -81,7 +81,8 @@
 
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
+import sha256 from 'crypto-js/sha256';
 
 export default{
     
@@ -105,7 +106,7 @@ export default{
       ],
       show1: false,
         show2: true,
-        password: 'Password',
+        password: '',
         rules: {
           required: value => !!value || 'Required.',
           min: v => v.length >= 8 || 'Min 8 characters',
@@ -116,7 +117,7 @@ export default{
       altaUsuari(){
       axios.put("http://prioritask.daw.institutmontilivi.cat/api/usuari/alta",{},{
         headers: {'token' : sessionStorage.token ,
-        'informacioUsuari':'{"nom": "'+ this.nom + '", "contrasenya": "'+ this.password  + '", "email": "'+ this.email  + '", "rol": "' + this.rol   +'"}' 
+        'informacioUsuari':'{"nom": "'+ this.nom + '", "contrasenya": "'+ sha256(this.password)  + '", "email": "'+ this.email  + '", "rol": "' + this.rol   +'"}' 
                   
                 }
       })
