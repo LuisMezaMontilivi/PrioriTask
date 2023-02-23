@@ -16,8 +16,8 @@ class Server {
       
       $uri = substr($_SERVER['REQUEST_URI'],4);
       $method = $_SERVER['REQUEST_METHOD'];
-
-      if($method == "PUT"){
+		
+      if(($method == "PUT" || $method == "OPTIONS")){
         switch($uri){
           case "/token/obtenir":
             $this->ProporcionarTokenInici();            
@@ -72,6 +72,7 @@ class Server {
       }
       else{
         header('HTTP/1.1 405 Method Not Allowed');
+		echo $method;
       }
 
       
