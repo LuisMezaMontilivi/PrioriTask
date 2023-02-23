@@ -1,5 +1,5 @@
 <template>
-    <v-sheet   class="mx-auto mt-14 centersheet" >
+    <v-sheet   class="mx-auto mt-8 centersheet" >
         <v-row justify="center" no-gutters>
             <v-col class="text-left" cols="12">
                 <h1>Crea l'usuari</h1>
