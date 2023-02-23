@@ -94,7 +94,7 @@ class Server {
     function ModificarTasca(){
       $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);//primer hem d'obtenir el rol del token 
       if(isset($rolToken)){//si el token existeix i no es admin
-        $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
+        $tasca = json_decode(utf8_encode($_SERVER["HTTP_TASCA"]),true);
         BdD::connect();
         $estat = BdD::relacionatsTascaBD($tasca["id"]);
         BdD::close();
@@ -122,7 +122,7 @@ class Server {
       $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
       $usuariValid = $rolToken == 'a' || $rolToken == 'g';//cridar al mètode per veure segons el token rebut si és o no vàlid i és gestor/admin
       if($usuariValid){
-        $tasca = json_decode($_SERVER["HTTP_TASCA"],true);
+        $tasca = json_decode(utf8_encode($_SERVER["HTTP_TASCA"]),true);
         BdD::connect();
         BdD::guardarTascaBD($tasca);
         BdD::close();
