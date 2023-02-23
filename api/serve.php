@@ -80,11 +80,14 @@ class Server {
 
     function ObtenirLlistatTasques(){
       $rolToken = $this->validaToken($_SERVER["HTTP_TOKEN"]);
-      if(isset($rolToken)){
+      if(isset($rolToken) && $rolToken){
         BdD::connect();
         $llistat = json_encode(BdD::recuperarLlistatTasquesBD($_SERVER["HTTP_TOKEN"]));
         echo $llistat;
         BdD::close();
+      }
+      else{
+        header('HTTP/1.1 403 Forbidden');
       }
     }
 

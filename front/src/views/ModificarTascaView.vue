@@ -8,18 +8,18 @@
 
                 <h2>Títol</h2>
                 <v-text-field v-model="titol" label="Inserta el títol de la tasca" clearable :rules="rules"
-                    :disabled="!esGestor"></v-text-field>
+                    :disabled="!esGestor || tascaFinalitzada"></v-text-field>
                 <h2>Descripció</h2>
                 <v-textarea v-model="descripcio" label="Inserta la descripció de la tasca" clearable :rules="rules"
-                    :disabled="!esGestor"></v-textarea>
+                    :disabled="!esGestor || tascaFinalitzada"></v-textarea>
                 <h2>Prioritat</h2>
                 <div class="prior">
                     <v-slider :min="1" :max="9" step="1" show-ticks="always" v-model="prioritat"
-                        :disabled="!esGestor"></v-slider>
+                        :disabled="!esGestor || tascaFinalitzada"></v-slider>
                 </div>
                 <div class="txtPrio">
                     <v-text-field :min="1" :max="9" v-model="prioritat" type="number"
-                        :disabled="!esGestor"></v-text-field>
+                        :disabled="!esGestor || tascaFinalitzada"></v-text-field>
                 </div>
 
             </v-sheet>
@@ -28,7 +28,7 @@
             <v-sheet width="90%" class="mx-auto">
                 <h2>Tècnic encarregat</h2>
                 <v-autocomplete clearable label="Llistat de tècnics" :items="tecnics" item-title="nom"
-                    item-value="id_usuari" :rules="rules" v-model="tecnicAssignat" :disabled="!esGestor">
+                    item-value="id_usuari" :rules="rules" v-model="tecnicAssignat" :disabled="!esGestor || tascaFinalitzada">
                 </v-autocomplete>
                 <v-table>
                     <tbody>
@@ -53,13 +53,13 @@
                         <v-col>
                             <v-sheet class="pa-2 ma-2">
                                 <v-btn v-bind:class="{ 'seleccionat': estat === 'p' }" size="large" block
-                                    @click="canviEstat('p')" color="warning">En progrés</v-btn>
+                                    @click="canviEstat('p')" color="warning" :disabled="tascaFinalitzada">En progrés</v-btn>
                             </v-sheet>
                         </v-col>
                         <v-col>
                             <v-sheet class="pa-2 ma-2">
                                 <v-btn v-bind:class="{ 'seleccionat': estat === 'd' }" size="large" block
-                                    @click="canviEstat('d')" color="success">Finalitzar</v-btn>
+                                    @click="canviEstat('d')" color="success" :disabled="tascaFinalitzada">Finalitzar</v-btn>
                             </v-sheet>
                         </v-col>
 
@@ -68,14 +68,14 @@
                         <v-col>
                             <v-sheet class="pa-2 ma-2">
                                 <v-btn v-bind:class="{ 'seleccionat': estat === 'e' }" block size="large"
-                                    @click="canviEstat('e')" color="error">Incidència</v-btn>
+                                    @click="canviEstat('e')" color="error" :disabled="tascaFinalitzada">Incidència</v-btn>
                             </v-sheet>
                         </v-col>
 
                         <v-col>
                             <v-sheet class="pa-2 ma-2">
                                 <v-btn v-bind:class="{ 'seleccionat': estat === 'a' }" block size="large"
-                                    @click="canviEstat('a')" color="primary">Arxivar</v-btn>
+                                    @click="canviEstat('a')" color="primary" :disabled="tascaFinalitzada">Arxivar</v-btn>
                             </v-sheet>
                         </v-col>
                     </v-row>
@@ -88,7 +88,7 @@
                 :disabled="esGestor"></v-textarea>
         </v-sheet>
         <div class="send">
-            <v-btn type="submit" block class="mt-5" @click="modificarTasca">Modificar tasca</v-btn>
+            <v-btn type="submit" block class="mt-5" @click="modificarTasca" :disabled="tascaFinalitzada">Modificar tasca</v-btn>
         </div>
     </v-form>
 
@@ -101,6 +101,7 @@ export default {
     name: 'ModificarTascaView',
     data() {
         return {
+            tascaFinalitzada: false,
             prioritat: 3,
             titol: "",
             descripcio: "",
@@ -144,7 +145,6 @@ export default {
             }
         },
         canviEstat(estat) {
-            console.log(estat);
             this.estat = estat;
         }
     },
@@ -158,6 +158,7 @@ export default {
             this.prioritat = this.tasca.prioritat;
             this.estat = this.tasca.estat;
             this.comentari = this.tasca.comentari ? this.tasca.comentari : "";
+            this.tascaFinalitzada = this.estat == 'd';
         }
         var rol = sessionStorage.getItem('rol');
         console.log(rol);
